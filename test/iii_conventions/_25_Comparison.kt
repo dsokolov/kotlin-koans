@@ -21,5 +21,4 @@ class _25_Comparison {
         assertTrue("The date ${first.s} should be after ${second.s}", first > second)
     }
 
-    operator fun MyDate.compareTo(other: MyDate): Int = todoTask25()
 }
