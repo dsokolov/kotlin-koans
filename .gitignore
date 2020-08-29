@@ -1,6 +1,16 @@
 out
-workspace.xml
 
+# IDEA
+.idea
+*.iml
+local.properties
+
+# Gradle
 .gradle
 build
-local.properties
+
+# Eclipse
+bin
+.settings
+.project
+.classpath

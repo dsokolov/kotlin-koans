@@ -1,33 +1,34 @@
 package util
 
-import i_introduction._1_Java_To_Kotlin_Converter._01_Functions
-import i_introduction._3_Default_Arguments._03_Default_Arguments
-import i_introduction._4_Lambdas._04_Lambdas
-import i_introduction._7_Nullable_Types._07_Nullable_Types
-import i_introduction._8_Smart_Casts._08_Smart_Casts
-import ii_collections._24_Extensions_On_Collections
-import org.junit.Assert.assertTrue
-import org.junit.Test
+import i_introduction._1_Java_To_Kotlin_Converter.N01JavaToKotlinConverterKtTest
+import i_introduction._3_Default_Arguments.N03DefaultArgumentsKtTest
+import i_introduction._4_Lambdas.N04LambdasKtTest
+import i_introduction._7_Nullable_Types.N07NullableTypesKtTest
+import i_introduction._8_Smart_Casts.N08SmartCastsKtTest
+import ii_collections.N24ExtensionsOnCollectionsKtTest
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
 class AdditionalTest {
-    @Test fun test() {
+    @Test
+    fun test() {
         invokeTests(
-                { _01_Functions().collection() },
-                { _03_Default_Arguments().testDefaultAndNamedParams() },
-                { _04_Lambdas().contains() },
-                { _07_Nullable_Types().everythingIsOk() },
-                { _08_Smart_Casts().testNum() },
-                { _24_Extensions_On_Collections().testCollectionOfOneElement() }
+            { N01JavaToKotlinConverterKtTest().collection() },
+            { N03DefaultArgumentsKtTest().testDefaultAndNamedParams() },
+            { N04LambdasKtTest().contains() },
+            { N07NullableTypesKtTest().everythingIsOk() },
+            { N08SmartCastsKtTest().testNum() },
+            { N24ExtensionsOnCollectionsKtTest().testCollectionOfOneElement() }
         )
-        assertTrue("${JavaCode.set}", JavaCode.set.isEmpty())
+        assertTrue(JavaCode.set.isEmpty(), "${JavaCode.set}")
     }
 
     private fun invokeTests(vararg tests: () -> Unit) {
         for (test in tests) {
             try {
                 test()
+            } catch (e: NotImplementedException) {
             }
-            catch (e: NotImplementedException) {}
         }
     }
 }
