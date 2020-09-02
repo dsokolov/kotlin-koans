@@ -1,56 +1,63 @@
 package iii_conventions
 
-data class MyDate(val year: Int, val month: Int, val dayOfMonth: Int) : Iterator<MyDate> {
+data class MyDate(val year: Int, val month: Int, val dayOfMonth: Int) : Comparable<MyDate> {
 
-    override fun hasNext(): Boolean = true
-
-    override fun next(): MyDate = this.nextDate()
+    override fun compareTo(other: MyDate): Int =
+            if (year == other.year) {
+                if (month == other.month) {
+                    if (dayOfMonth == other.dayOfMonth) {
+                        0
+                    } else {
+                        dayOfMonth.compareTo(other.dayOfMonth)
+                    }
+                } else {
+                    month.compareTo(other.month)
+                }
+            } else {
+                year.compareTo(other.year)
+            }
 
 }
 
-operator fun MyDate.plus(ti: TimeInterval): MyDate = when (ti) {
-    TimeInterval.DAY -> MyDate(this.year, this.month, this.dayOfMonth + 1)
-    TimeInterval.WEEK -> MyDate(this.year, this.month, this.dayOfMonth + 7)
-    TimeInterval.YEAR -> MyDate(this.year + 1, this.month, this.dayOfMonth)
-    else -> MyDate(this.year, this.month, this.dayOfMonth)
-}
-
-fun MyDate.nextDate() = MyDate(this.year, this.month, this.dayOfMonth + 1)
 
 operator fun MyDate.rangeTo(other: MyDate): DateRange = DateRange(this, other)
-
-operator fun MyDate.compareTo(other: MyDate): Int {
-    if (this.year > other.year) {
-        return 1
-    } else if (this.year < other.year) {
-        return -1
-    } else {
-        if (this.month > other.month) {
-            return 1
-        } else if (this.month < other.month) {
-            return -1
-        } else {
-            if (this.dayOfMonth > other.dayOfMonth) {
-                return 1
-            } else if (this.dayOfMonth < other.dayOfMonth) {
-                return -1
-            } else {
-                return 0
-            }
-        }
-    }
-}
 
 enum class TimeInterval {
     DAY,
     WEEK,
-    YEAR
+    YEAR;
+
+    operator fun times(n: Int) = RepeatedTimeInterval(this, n)
+
 }
 
-class DateRange(val start: MyDate, val endInclusive: MyDate) {
+class RepeatedTimeInterval(val ti: TimeInterval, val n: Int)
+
+operator fun MyDate.plus(other: TimeInterval) = this.addTimeIntervals(other, 1)
+
+operator fun MyDate.plus(other: RepeatedTimeInterval) = this.addTimeIntervals(other.ti, other.n)
+
+class DateRange(
+        override val start: MyDate,
+        override val endInclusive: MyDate
+) : ClosedRange<MyDate>, Iterable<MyDate> {
+
+    override fun iterator(): Iterator<MyDate> {
+        return object : Iterator<MyDate> {
+
+            private var current = start.copy()
+
+            override fun hasNext(): Boolean {
+                return current <= endInclusive
+            }
+
+            override fun next(): MyDate {
+                val result = current.copy()
+                current = current.nextDay()
+                return result
+            }
+
+        }
+    }
 
 }
-
-operator fun DateRange.contains(date: MyDate): Boolean = date > this.start && date <= this.endInclusive
-
-operator fun DateRange.iterator(): Iterator<MyDate> = MyDate(this.start.year, this.start.month, this.start.dayOfMonth)
